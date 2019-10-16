@@ -1,0 +1,72 @@
+<div *ngIf="isLoading">
+  <div class="loading-message">
+    <div class="page-content">
+      <i class="fas fa-cog fa-spin"></i>
+      <h3>Please wait while we find your products...</h3>
+    </div>
+  </div>
+</div>
+<h2 class="page-heading" *ngIf="!isLoading">Products 
+  <a class="btn btn-small btn-green header-button" routerLink="./new" *ngIf="products.length > 0">
+    <i class="far fa-plus"></i>New product
+  </a>
+</h2>
+<div class="add-first" *ngIf="!isLoading && products.length === 0">
+  <h3><i class="fas fa-box-open"></i>
+  You don't have any products...</h3>
+  <a class="btn btn-green" routerLink="./new"><i class="far fa-plus"></i>Add your first product</a>
+</div>
+<div class="content-inner" *ngIf="!isLoading && products.length > 0 "> 
+  <div class="list-actions">
+    <form #productList="ngForm">
+      <div class="input-group has-prefix">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="far fa-search"></i>
+          </span>
+        </div>
+        <input class="form-control"
+          [(ngModel)]="productFilterText"
+          (keyup)="update()"
+          name="filter"
+          type="search"
+          placeholder="Search products"
+        >
+      </div>
+    </form>
+  </div>  
+  <div class="table-responsive overflow-hidden">
+    <app-kendo-sortable-products
+      [categories]="shopCategories"
+      [products]="products"
+      [sharedStates]="eventState"
+      (swapEvent)="swap($event)"
+      (deleteEvent)="showDelete($event)"
+      (editEvent)="showEdit($event)"
+    ></app-kendo-sortable-products>
+  </div>
+</div>
+<app-fk-dialog
+  [resizable]="true"
+  [isPopUp]="true"
+  [isMedium]="false"
+  [width]="860"
+  header="Delete Product?"
+  [modal]="false"
+  [responsive]="true"
+  [(visible)]="deleteProduct"
+>
+  <div class="modal-alert centered">
+    Do you want to delete the following product: <br/>
+    <em>{{eventProduct?.title}}</em>
+  </div>
+  <br />
+  <div class="modal-actions">
+    <button type="submit" class="btn btn-cancel" (click)="deleteProduct=false">
+      <i class="fal fa-times"></i> Cancel
+    </button>
+    <button #deleteButton type="submit" class="btn btn-save" (click)="delete(deleteButton)">
+      <i class="fal fa-check"></i> Delete
+    </button>
+  </div>
+</app-fk-dialog>
